@@ -26,7 +26,7 @@ class BookController extends Controller
             $request->query('borrowed'),
             fn ($query) => auth()->user()->isAdmin()
                             ? $query->has('students', '>', 0)
-                            : $query->whereHas('students', fn ($query) => $query->where('user_id', auth()->id()))
+                            : $query->whereHas('students', fn ($query) => $query->where('user_id', auth()->id())->whereNull('returned_at'))
         )->paginate();
 
         return view('dashboard.books.list', compact('books'));
@@ -98,6 +98,7 @@ class BookController extends Controller
         $book->students()->syncWithoutDetaching([
             auth()->id() => [
                 'due_date' => $request->input('due_date'),
+                'returned_at' => null,
             ],
         ]);
 

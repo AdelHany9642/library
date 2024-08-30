@@ -19,13 +19,10 @@ trait BookScopes
         $user ?? $user = auth()->user();
 
         if ($user->isStudent()) {
-            $builder->whereDoesntHave(
-                'students',
-                fn ($query) => $query->where('user_id', $user->getKey())->whereNotNull('returned_at')
-            )
-            ->withCount('students')
-            ->havingRaw('SUM(quantity - students_count) > 0')
-            ->groupBy('id');
+            $builder
+                ->withCount('students')
+                ->havingRaw('SUM(quantity - students_count) > 0')
+                ->groupBy('id');
         }
     }
 }

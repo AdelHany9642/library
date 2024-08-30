@@ -27,6 +27,9 @@ trait BookHelpers
      */
     public function hasBeenBorrowedBy(User $user)
     {
-        return $this->students()->where('user_id', $user->getKey())->exists();
+        return $this->students()
+                    ->where('user_id', $user->getKey())
+                    ->whereNull('returned_at')
+                    ->exists();
     }
 }
